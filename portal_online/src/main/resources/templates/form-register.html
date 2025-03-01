@@ -19,36 +19,58 @@
   </h1>
 </header>
 
-<div class="contForm" style="display: flex; flex-direction: column; text-align:center; padding: 20px;">
-  <form action="/datosUsuario" method="post">
+<div class="contForm" style="min-height: 400px; padding: 60px; display:flex; flex-direction: column; justify-content:flex-end; align-items:center;">
+  <form action="/inicio" method="post" style="display: flex;flex-direction: column;flex: 1 1 auto;">
     <div style="display:flex; flex-direction: row; text-align:center; gap:20px;justify-content: center;">
       <div class="contLab" style="display:flex; flex-direction:column; gap:15px; align-items:flex-start;">
         <label for="POST-nameUser">Nombre Usuario:</label>
-        <label for="POST-pass">Nombre:</label>
-        <label for="POST-pass">Apellidos:</label>
-        <label for="POST-pass">Correo Electrónico:</label>
+        <label for="POST-name">Nombre:</label>
+        <label for="POST-apell">Apellidos:</label>
+        <label for="POST-email">Correo Electrónico:</label>
         <label for="POST-pass">Contraseña:</label>
-
       </div>
-
       <div class="contLab" style="display:flex; flex-direction:column; width=80%; gap:10px;">
         <input id="POST-nameUser" type="text" name="nameUser" required/>
         <input id="POST-name" type="text" name="name" required/>
-        <input id="POST-nameApell" type="text" name="nameApell" required/>
-        <input id="POST-nameEmail" type="text" name="nameEmail" required/>
+        <input id="POST-apell" type="text" name="apell" required/>
+        <input id="POST-email" type="text" name="email" required/>
         <input id="POST-pass" type="password" name="pass" required/>
       </div>
     </div>
     <div class="input" style="display:flex; flex-direction:row; gap:25px; justify-content: center; margin-top:25px;">
       <button type="submit" formmethod="get" formnovalidate formaction="/login" class="btn btn-outline-primary">Login</button>
-      <button class="btn btn-primary" type="button">Enviar</button>
+      <button class="btn btn-primary" type="submit">Enviar</button>
     </div>
   </form>
+  <div class="toast-container" style="display:flex; flex-direction:column; gap:15px; align-items:center; justify-content: center;">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Error de registro</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Ha ocurrido un error en el registro. Vuelva a intentarlo
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="btn_register">
 
 </div>
+
+<!-- Script para detectar el error y mostrar el Toast -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "true") {
+      const toastEl = document.getElementById("liveToast");
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    }
+  });
+</script>
+
 
 </body>
 </html>
