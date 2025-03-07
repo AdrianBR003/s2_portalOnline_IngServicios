@@ -11,12 +11,12 @@ public class HashPassword {
             byte[] hashB = md.digest(password.getBytes()); // Transformamos la password en una array de bytes
             return Base64.getEncoder().encodeToString(hashB); // Lo transformamos a binario
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error al realizar el hash de la password");
+            throw new IllegalArgumentException("Error create hash of password");
         }
     }
 
     public static boolean verifyP(String oPassword, String hPassword){
-        System.out.println("Contraseñas: " +  hashP(oPassword).equals(hPassword));
+        System.out.println("Passwords: " +  hashP(oPassword).equals(hPassword));
         return hashP(oPassword).equals(hPassword);
     }
 
