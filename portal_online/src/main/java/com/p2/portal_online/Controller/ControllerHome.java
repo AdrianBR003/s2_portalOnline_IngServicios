@@ -33,31 +33,36 @@ public class ControllerHome {
     // Vamos a dejar la comprobación de sesión unicamente para el GET /homeshop
     @GetMapping(value = "/login")
     public String getLogin(HttpServletRequest req, RedirectAttributes redirec) {
-        if(req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null ) {
+        if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
             return "/homeshop";
-        }else{
+        } else {
             return "form-login";
         }
     }
 
     @GetMapping(value = "/register")
     public String getRegister(HttpServletRequest req, RedirectAttributes redirec) {
+        if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
+            return "/homeshop";
+        } else {
             return "form-register";
+        }
     }
 
     @GetMapping(value = "/homeshop")
-    public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes){
+    public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes) {
         HttpSession session = req.getSession();
-        if(session!=null && session.getAttribute("id_Usuario")!=null){
+        if (session != null && session.getAttribute("id_Usuario") != null) {
             return "/homeshop";
-        }else{
+        } else {
             redirectAttributes.addFlashAttribute("errorMessage", "NO se ha iniciado sesion");
+            redirectAttributes.addFlashAttribute("toastType", "danger");
             return "redirect:/login";
         }
     }
 
-    @PostMapping(value="/homeshop")
-    public String postInicio(HttpServletRequest req, HttpServletResponse res, Model mod, RedirectAttributes redirectAttributes){
+    @PostMapping(value = "/homeshop")
+    public String postInicio(HttpServletRequest req, HttpServletResponse res, Model mod, RedirectAttributes redirectAttributes) {
         String nameUser = req.getParameter("nameUser");
         String name = req.getParameter("name");
         String lastname = req.getParameter("apell");
@@ -65,33 +70,41 @@ public class ControllerHome {
         String password = req.getParameter("pass");
 
         // Creacion del Usuario
-        System.out.println("User!: " + new User(nameUser,name,lastname,email,password));
+        System.out.println("User!: " + new User(nameUser, name, lastname, email, password));
 
-        if(req.getParameter("email")==null){ // Estaremos en Login
+        if (req.getParameter("email") == null) { // Estaremos en Login
             System.out.println("LOGIN!");
-            Long id_usuario = userService.authUser(new User(nameUser,password));
-            if(id_usuario !=-1){
+            Long id_usuario = userService.authUser(new User(nameUser, password));
+            if (id_usuario != -1) {
                 // Se ha autenticado correctamente, asociación de ID usuarios con ID sesion
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario); // Le pasamos en la sesion el id_usuario
-                return "homeshop";
-            }else{
+                redirectAttributes.addFlashAttribute("errorMessage", "Login Verificado!");
+                redirectAttributes.addFlashAttribute("toastType", "success");
+                return "redirect:/homeshop";
+            } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Usuario o contraseña incorrectos");
+                redirectAttributes.addFlashAttribute("toastType", "danger");
+                req.getSession().setAttribute("id_Usuario", null);
                 return "redirect:/login";
             }
 
-        }else{ // Estaremos en Register
+        } else { // Estaremos en Register
             System.out.println("REGISTER!");
             String passwordHash = HashPassword.hashP(password);
-            Long id_usuario = userService.registerUser(new User(nameUser,name,lastname,email,passwordHash));
-            if(id_usuario != -1) {
+            Long id_usuario = userService.registerUser(new User(nameUser, name, lastname, email, passwordHash));
+            if (id_usuario != -1) {
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario);
-                return "homeshop";
-            }else{
+                redirectAttributes.addFlashAttribute("errorMessage", "Register Verificado!");
+                redirectAttributes.addFlashAttribute("toastType", "success");
+                return "redirect:/homeshop";
+            } else {
                 // NO se ha registrado
                 System.out.println("ERROR REGISTER, exist!");
                 redirectAttributes.addFlashAttribute("errorMessage", "Usuario o contraseña incorrectos");
+                redirectAttributes.addFlashAttribute("toastType", "danger");
+                req.getSession().setAttribute("id_Usuario", null);
                 return "redirect:/register";
             }
         }

@@ -44,23 +44,24 @@
 
 </div>
 
+<!-- Toast de Bootstrap -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="dynamicToast" class="toast bg-danger text-white" role="alert"
-         aria-live="assertive" aria-atomic="true">
-        <div class="toast-header bg-dark text-white">
-            <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close btn-close-white"
-                    data-bs-dismiss="toast" aria-label="Close"></button>
+    <div id="dynamicToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-white" th:classappend="${toastType != null ? ' bg-' + toastType : ' bg-dark'}">
+            <strong class="me-auto" th:text="${toastType != null ? (toastType eq 'success' ? 'Éxito' : 'Error') : 'Mensaje'}">Mensaje</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body"></div>
+        <div class="toast-body">
+            <span th:text="${errorMessage}">Aquí va el mensaje dinámico</span>
+        </div>
     </div>
 </div>
 
+<!-- Script para mostrar el Toast si existe "errorMessage" -->
 <script th:if="${errorMessage != null}">
     document.addEventListener("DOMContentLoaded", function () {
-        const toastEl = document.getElementById("dynamicToast");
-        toastEl.querySelector(".toast-body").textContent = "[[${errorMessage}]]";
-        const toast = new bootstrap.Toast(toastEl);
+        var toastEl = document.getElementById("dynamicToast");
+        var toast = new bootstrap.Toast(toastEl);
         toast.show();
     });
 </script>
