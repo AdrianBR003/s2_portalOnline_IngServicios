@@ -50,9 +50,11 @@ public class ControllerHome {
     }
 
     @GetMapping(value = "/homeshop")
-    public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes) {
+    public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes, Model model) {
         HttpSession session = req.getSession();
         if (session != null && session.getAttribute("id_Usuario") != null) {
+            model.addAttribute("errorMessage", "Bienvenido de Nuevo!");
+            model.addAttribute("toastType", "success");
             return "/homeshop";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "NO se ha iniciado sesion");
