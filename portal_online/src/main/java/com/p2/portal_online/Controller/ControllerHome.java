@@ -53,11 +53,11 @@ public class ControllerHome {
     public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes, Model model) {
         HttpSession session = req.getSession();
         if (session != null && session.getAttribute("id_Usuario") != null) {
-            model.addAttribute("errorMessage", "Bienvenido de Nuevo!");
+            model.addAttribute("alertMessage", "Bienvenido de Nuevo!");
             model.addAttribute("toastType", "success");
             return "/homeshop";
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "NO se ha iniciado sesion");
+            redirectAttributes.addFlashAttribute("alertMessage", "NO se ha iniciado sesion");
             redirectAttributes.addFlashAttribute("toastType", "danger");
             return "redirect:/login";
         }
@@ -81,11 +81,11 @@ public class ControllerHome {
                 // Se ha autenticado correctamente, asociación de ID usuarios con ID sesion
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario); // Le pasamos en la sesion el id_usuario
-                redirectAttributes.addFlashAttribute("errorMessage", "Login Verificado!");
+                redirectAttributes.addFlashAttribute("alertMessage", "Login Verificado!");
                 redirectAttributes.addFlashAttribute("toastType", "success");
                 return "redirect:/homeshop";
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Usuario o contraseña incorrectos");
+                redirectAttributes.addFlashAttribute("alertMessage", "Usuario o contraseña incorrectos");
                 redirectAttributes.addFlashAttribute("toastType", "danger");
                 req.getSession().setAttribute("id_Usuario", null);
                 return "redirect:/login";
@@ -98,13 +98,13 @@ public class ControllerHome {
             if (id_usuario != -1) {
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario);
-                redirectAttributes.addFlashAttribute("errorMessage", "Register Verificado!");
+                redirectAttributes.addFlashAttribute("alertMessage", "Register Verificado!");
                 redirectAttributes.addFlashAttribute("toastType", "success");
                 return "redirect:/homeshop";
             } else {
                 // NO se ha registrado
                 System.out.println("ERROR REGISTER, exist!");
-                redirectAttributes.addFlashAttribute("errorMessage", "Usuario o contraseña incorrectos");
+                redirectAttributes.addFlashAttribute("alertMessage", "Usuario o contraseña incorrectos");
                 redirectAttributes.addFlashAttribute("toastType", "danger");
                 req.getSession().setAttribute("id_Usuario", null);
                 return "redirect:/register";
