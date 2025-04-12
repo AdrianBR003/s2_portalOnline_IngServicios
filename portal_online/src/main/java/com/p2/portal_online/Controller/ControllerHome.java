@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
@@ -77,9 +78,12 @@ public class ControllerHome {
                 model.addAttribute("userslist", this.userService.getAllUsers());
                 return "admin";
             }
-            model.addAttribute("alertMessage", "Éxito Inicio de Sesión");
+
+            boolean esCompra = "true".equals(model.getAttribute("rehomeshop"));
+            model.addAttribute("alertMessage", esCompra ? "La compra se ha realizado exitósamente" : "Éxito Inicio de Sesión");
             model.addAttribute("toastType", "success");
             model.addAttribute("listProducts", productService.inicializar());
+
             return "homeshop";
         } else {
             redirectAttributes.addFlashAttribute("alertMessage", "NO se ha iniciado sesion");
@@ -154,6 +158,19 @@ public class ControllerHome {
         model.addAttribute("alertMessage", "Éxito en el Cierre de Sesión");
         model.addAttribute("toastType", "success");
         return "form-login";
+    }
+
+    @GetMapping("/paypal")
+    public String mostrarFormularioPago(@RequestParam String nombre, @RequestParam Double precio, Model model) {
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("precio", precio);
+        return "paypal";
+    }
+
+    @GetMapping("/rehomeshop")
+    public String rehomeShop(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("rehomeshop", "true");
+        return "redirect:/homeshop";
     }
 
 }

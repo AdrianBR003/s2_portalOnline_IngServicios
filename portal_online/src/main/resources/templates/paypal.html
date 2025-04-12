@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagar con PayPal</title>
+</head>
+<body>
+<h2>Procesando pago...</h2>
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" id="paypalForm">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="business" value="sb-whbn740024057@business.example.com">
+    <input type="hidden" name="item_name" th:value="${nombre}">
+    <input type="hidden" name="amount" th:value="${precio}">
+    <input type="hidden" name="currency_code" value="EUR">
+    <input type="submit" value="Pagar con PayPal">
+    <input type="hidden" name="return" value="http://localhost:8080/rehomeshop">
+    <input type="hidden" name="cancel_return" value="http://localhost:8080/rehomeshop">
+    <a href="/rehomeshop" class="btn btn-primary">Volver a la tienda</a>
+</form>
+
+<script>
+    document.getElementById("paypalForm").submit();
+</script>
+</body>
+</html>

@@ -110,7 +110,7 @@
               <p class="price" th:text="${product.getPrice()}"></p>
               <p class="price">€</p>
             </div>
-            <a href="#" class="btn btn-primary">Comprar</a>
+            <a th:href="@{/paypal(nombre=${product.name}, precio=${product.price})}" target="_blank" class="btn btn-primary">Comprar</a>
           </div>
         </div>
       </ul>
