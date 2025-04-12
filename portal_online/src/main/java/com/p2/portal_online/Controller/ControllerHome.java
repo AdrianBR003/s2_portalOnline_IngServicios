@@ -62,7 +62,7 @@ public class ControllerHome {
     public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes, Model model) {
         HttpSession session = req.getSession();
         if (session != null && session.getAttribute("id_Usuario") != null) {
-            model.addAttribute("alertMessage", "Bienvenido de Nuevo!");
+            model.addAttribute("alertMessage", "Éxito Inicio de Sesión");
             model.addAttribute("toastType", "success");
             model.addAttribute("listProducts", productService.inicializar());
             return "homeshop";
@@ -91,6 +91,7 @@ public class ControllerHome {
                 // Se ha autenticado correctamente, asociación de ID usuarios con ID sesion
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario); // Le pasamos en la sesion el id_usuario
+                session.setAttribute("name", nameUser); // Le pasamos el nameuser para mostrarlo en el html
                 redirectAttributes.addFlashAttribute("alertMessage", "Login Verificado!");
                 redirectAttributes.addFlashAttribute("toastType", "success");
                 return "redirect:/homeshop";
@@ -108,6 +109,7 @@ public class ControllerHome {
             if (id_usuario != -1) {
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario);
+                session.setAttribute("name", nameUser); // Le pasamos el nameuser para mostrarlo en el html
                 redirectAttributes.addFlashAttribute("alertMessage", "Register Verificado!");
                 redirectAttributes.addFlashAttribute("toastType", "success");
                 return "redirect:/homeshop";
@@ -121,4 +123,14 @@ public class ControllerHome {
             }
         }
     }
+
+    @PostMapping(value = "/signout")
+    public String postSignOut(HttpServletRequest req, Model model){
+        // Invalidamos la sesion y devolvemos al Login
+        req.getSession().invalidate();
+        model.addAttribute("alertMessage", "Éxito en el Cierre de Sesión");
+        model.addAttribute("toastType", "success");
+        return "form-login";
+    }
+
 }
