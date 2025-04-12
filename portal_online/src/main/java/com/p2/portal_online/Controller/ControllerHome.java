@@ -2,7 +2,9 @@ package com.p2.portal_online.Controller;
 
 
 import com.p2.portal_online.Model.User;
+import com.p2.portal_online.Repository.IProductRepository;
 import com.p2.portal_online.Security.HashPassword;
+import com.p2.portal_online.Service.ProductService;
 import com.p2.portal_online.Service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,16 @@ import java.util.Objects;
 @Controller
 public class ControllerHome {
 
+    private final ProductService productService;
+    private final UserService userService;
+
+    // Inyectas las dependencias (ProductService e UserService) al constructor de Controller
+    @Autowired
+    public ControllerHome(ProductService productService, UserService userService) {
+        this.productService = productService;
+        this.userService = userService;
+    }
+
     /*
         NOTES:
         > El ID del usuario, debe de ser unico para extraer el valor de la base de datos
@@ -27,14 +39,11 @@ public class ControllerHome {
 
      */
 
-    @Autowired
-    private UserService userService;
-
     // Vamos a dejar la comprobación de sesión unicamente para el GET /homeshop
     @GetMapping(value = "/login")
     public String getLogin(HttpServletRequest req, RedirectAttributes redirec) {
         if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
-            return "/homeshop";
+            return "homeshop";
         } else {
             return "form-login";
         }
@@ -43,7 +52,7 @@ public class ControllerHome {
     @GetMapping(value = "/register")
     public String getRegister(HttpServletRequest req, RedirectAttributes redirec) {
         if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
-            return "/homeshop";
+            return "homeshop";
         } else {
             return "form-register";
         }
@@ -55,7 +64,8 @@ public class ControllerHome {
         if (session != null && session.getAttribute("id_Usuario") != null) {
             model.addAttribute("alertMessage", "Bienvenido de Nuevo!");
             model.addAttribute("toastType", "success");
-            return "/homeshop";
+            model.addAttribute("listProducts", productService.inicializar());
+            return "homeshop";
         } else {
             redirectAttributes.addFlashAttribute("alertMessage", "NO se ha iniciado sesion");
             redirectAttributes.addFlashAttribute("toastType", "danger");

@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
+    private final IUserRepository iUserRepository;
+
     @Autowired
-    private IUserRepository iUserRepository;
+    public UserService(IUserRepository iUserRepository){
+        this.iUserRepository = iUserRepository;
+    }
 
     public Long authUser(User user){ // Si se autentica devuelve el id del usuario, si no, devuelve -1
         // TODO: Hacer la comprobación para el caso donde sea nulo el usuario (no exista)
