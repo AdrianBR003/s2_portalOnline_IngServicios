@@ -41,8 +41,13 @@ public class ControllerHome {
 
     // Vamos a dejar la comprobación de sesión unicamente para el GET /homeshop
     @GetMapping(value = "/login")
-    public String getLogin(HttpServletRequest req, RedirectAttributes redirec) {
+    public String getLogin(HttpServletRequest req, Model model) {
         if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
+            // Si es admin, le devuelve a la vista 'admin'
+            if (req.getSession().getAttribute("name").equals("admin")) {
+                model.addAttribute("userslist", this.userService.getAllUsers());
+                return "admin";
+            }
             return "homeshop";
         } else {
             return "form-login";
@@ -50,8 +55,13 @@ public class ControllerHome {
     }
 
     @GetMapping(value = "/register")
-    public String getRegister(HttpServletRequest req, RedirectAttributes redirec) {
+    public String getRegister(HttpServletRequest req, Model model) {
         if (req.getSession(false) != null && req.getSession(false).getAttribute("id_Usuario") != null) {
+            // Si es admin, le devuelve a la vista 'admin'
+            if (req.getSession().getAttribute("name").equals("admin")) {
+                model.addAttribute("userslist", this.userService.getAllUsers());
+                return "admin";
+            }
             return "homeshop";
         } else {
             return "form-register";
@@ -62,6 +72,11 @@ public class ControllerHome {
     public String getHomeshop(HttpServletRequest req, RedirectAttributes redirectAttributes, Model model) {
         HttpSession session = req.getSession();
         if (session != null && session.getAttribute("id_Usuario") != null) {
+            // Si es admin, le devuelve a la vista 'admin'
+            if (session.getAttribute("name").equals("admin")) {
+                model.addAttribute("userslist", this.userService.getAllUsers());
+                return "admin";
+            }
             model.addAttribute("alertMessage", "Éxito Inicio de Sesión");
             model.addAttribute("toastType", "success");
             model.addAttribute("listProducts", productService.inicializar());
@@ -74,7 +89,7 @@ public class ControllerHome {
     }
 
     @PostMapping(value = "/homeshop")
-    public String postInicio(HttpServletRequest req, HttpServletResponse res, Model mod, RedirectAttributes redirectAttributes) {
+    public String postInicio(HttpServletRequest req, RedirectAttributes redirectAttributes, Model model) {
         String nameUser = req.getParameter("nameUser");
         String name = req.getParameter("name");
         String lastname = req.getParameter("apell");
@@ -86,12 +101,20 @@ public class ControllerHome {
 
         if (req.getParameter("email") == null) { // Estaremos en Login
             System.out.println("LOGIN!");
+
             Long id_usuario = userService.authUser(new User(nameUser, password));
             if (id_usuario != -1) {
                 // Se ha autenticado correctamente, asociación de ID usuarios con ID sesion
                 HttpSession session = req.getSession(true); // Se crea una vez que se vaya a iniciar sesión, no antes
                 session.setAttribute("id_Usuario", id_usuario); // Le pasamos en la sesion el id_usuario
                 session.setAttribute("name", nameUser); // Le pasamos el nameuser para mostrarlo en el html
+
+                // Verifica si es adminsitrador
+                if (nameUser.equalsIgnoreCase("admin")) {
+                    model.addAttribute("userslist", this.userService.getAllUsers());
+                    return "admin";
+                }
+
                 redirectAttributes.addFlashAttribute("alertMessage", "Login Verificado!");
                 redirectAttributes.addFlashAttribute("toastType", "success");
                 return "redirect:/homeshop";
@@ -125,7 +148,7 @@ public class ControllerHome {
     }
 
     @PostMapping(value = "/signout")
-    public String postSignOut(HttpServletRequest req, Model model){
+    public String postSignOut(HttpServletRequest req, Model model) {
         // Invalidamos la sesion y devolvemos al Login
         req.getSession().invalidate();
         model.addAttribute("alertMessage", "Éxito en el Cierre de Sesión");

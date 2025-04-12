@@ -6,6 +6,8 @@ import com.p2.portal_online.Security.HashPassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -37,6 +39,10 @@ public class UserService {
             User userDB = iUserRepository.save(user);
             return userDB.getId_User();
         }
+    }
+
+    public List<User> getAllUsers(){
+        return this.iUserRepository.findAll();
     }
 
 };
